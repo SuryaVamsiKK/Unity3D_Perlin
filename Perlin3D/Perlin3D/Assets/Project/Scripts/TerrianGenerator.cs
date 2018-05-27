@@ -5,30 +5,32 @@ using UnityEngine;
 
 public class TerrianGenerator : MonoBehaviour
 {
-
+	[Header ("Look of the Terrian")]
 	[SerializeField]
 	private GameObject blocks;
-	[SerializeField]
-	private float noiseScale = 0.05f;
-	public int chunkSize = 30; //numberof cubes
-	public float limitsL = 0.5f;
-	public float limitsH = 0.5f;
-	public float limitsLr = 0.5f;
-	public float limitsHr = 0.5f;
-	public float xp;
-	public float yp;
-	public float zp;
-	public float range;
-	public bool sphere = false;
 	public Material material;
-	private GameObject[,,] ListofGameobjects;
 
-	private List<GameObject>[,,] Listofneighbours;
+	[Header ("Noise Values")]
+	[SerializeField]
+	private float noiseScale = 50;
+	[Range(0, 1)]
+	public float readableValue = 0.5f;
+	public Vector3 noisePosition;
+
+	[Header ("Terrian Size Values")]
+	public int chunkSize = 30;
+	public float range;
+
+	public bool sphere = false;
+	private Cell[,,] ListofGameobjects;
+
+	private List<Cell>[,,] Listofneighbours;
 
 	void Awake()
 	{
-		ListofGameobjects = new GameObject[chunkSize, chunkSize, chunkSize];
-		Listofneighbours = new List<GameObject>[chunkSize, chunkSize, chunkSize];
+		noiseScale = noiseScale * 0.001f;
+		ListofGameobjects = new Cell[chunkSize, chunkSize, chunkSize];
+		Listofneighbours = new List<Cell>[chunkSize, chunkSize, chunkSize];
 		generator();
 	}
 
@@ -51,30 +53,29 @@ public class TerrianGenerator : MonoBehaviour
 			{
 				for (int z = 0; z < chunkSize; z++)
 				{
-					GameObject nth = Instantiate(blocks, new Vector3(x, y, z), Quaternion.identity, this.transform) as GameObject;
-					ListofGameobjects[x, y, z] = nth;
-					Listofneighbours[x, y, z] = new List<GameObject>();
+					ListofGameobjects[x, y, z] = new Cell(false, true);
+					Listofneighbours[x, y, z] = new List<Cell>();
 
-					float gen = Perlin3D(x * noiseScale + xp, y * noiseScale + yp, z * noiseScale + zp);
+					float gen = Perlin3D(x * noiseScale + noisePosition.x, y * noiseScale + noisePosition.y, z * noiseScale + noisePosition.z);	// pussing the generated perlin value by the method written below.
 					Mathf.Round(gen);
 
-					if (gen >= limitsL)
+					if (gen >= readableValue)
 					{
 						float radius = chunkSize / 2;
 						if (sphere == true && Vector3.Distance(new Vector3(x, y, z), Vector3.one * radius) > radius)
 							continue;
 
-						ListofGameobjects[x, y, z].SetActive(true);
+						ListofGameobjects[x, y, z].inrange = true;		// enebling all the possible positions that are under the given range in the generated Perlin
 					}
 
 					#region For The Outer Shell if a planet
-					if (gen <= limitsL)
+					if (gen <= readableValue)
 					{
 						float radius = chunkSize / 2;
 
 						if (sphere == true && Vector3.Distance(new Vector3(x, y, z), Vector3.one * radius) >= radius && sphere == true && Vector3.Distance(new Vector3(x, y, z), Vector3.one * radius) < (radius + 1))
 						{
-							ListofGameobjects[x, y, z].SetActive(true);
+							ListofGameobjects[x, y, z].inrange = true;  // enabeling the possible positions for the planetry formation
 						}
 					}
 					#endregion
@@ -95,14 +96,14 @@ public class TerrianGenerator : MonoBehaviour
 						goto ot;
 					}
 
-					Listofneighbours[x, y, z].Add(ListofGameobjects[x + 1, y, z]);
-					Listofneighbours[x, y, z].Add(ListofGameobjects[x - 1, y, z]);
+					Listofneighbours[x, y, z].Add(ListofGameobjects[x + 1, y, z]); // Neighbour to the left of the Current cell
+					Listofneighbours[x, y, z].Add(ListofGameobjects[x - 1, y, z]); // Neighbour to the right of the Current cell 
 
-					Listofneighbours[x, y, z].Add(ListofGameobjects[x, y + 1, z]);
-					Listofneighbours[x, y, z].Add(ListofGameobjects[x, y - 1, z]);
+					Listofneighbours[x, y, z].Add(ListofGameobjects[x, y + 1, z]); // Neighbour Above the current Cell
+					Listofneighbours[x, y, z].Add(ListofGameobjects[x, y - 1, z]); // Neighbour Below the current Cell
 
-					Listofneighbours[x, y, z].Add(ListofGameobjects[x, y, z + 1]);
-					Listofneighbours[x, y, z].Add(ListofGameobjects[x, y, z - 1]);
+					Listofneighbours[x, y, z].Add(ListofGameobjects[x, y, z + 1]); // Neighbour Ahead of the Current Cell
+					Listofneighbours[x, y, z].Add(ListofGameobjects[x, y, z - 1]); // Neighbour Behind the Current Cell
 					ot:;
 				}
 			}
@@ -117,13 +118,13 @@ public class TerrianGenerator : MonoBehaviour
 				for (int z = 0; z < chunkSize; z++)
 				{
 
-					List<GameObject> neighbours;
+					List<Cell> neighbours;
 					neighbours = Listofneighbours[x, y, z];
 					int i = 0;
 
-					foreach (GameObject g in neighbours)
+					foreach (Cell g in neighbours)
 					{
-						if (g.activeInHierarchy)
+						if (g.inrange == true)
 						{
 							i++;
 						}
@@ -131,7 +132,7 @@ public class TerrianGenerator : MonoBehaviour
 
 					if (i == 6)
 					{
-						ListofGameobjects[x,y,z].GetComponent<MeshRenderer>().enabled = false;
+						ListofGameobjects[x,y,z].needed = false;			// these are the possible cube positions where the cubes are totally covered and not needed
 					}
 				}
 			}
@@ -145,7 +146,7 @@ public class TerrianGenerator : MonoBehaviour
 			{
 				for (int z = 0; z < chunkSize; z++)
 				{
-					if (ListofGameobjects[x, y, z].activeInHierarchy && ListofGameobjects[x, y, z].GetComponent<MeshRenderer>().enabled == true)
+					if (ListofGameobjects[x, y, z].inrange == true && ListofGameobjects[x, y, z].needed == true) // Printing The Cube at the correct positions for the Mesh.
 					{
 						#region Mesh Creation
 						blockMesh.transform.position = new Vector3(x, y, z);
@@ -161,26 +162,30 @@ public class TerrianGenerator : MonoBehaviour
 		List<List<CombineInstance>> combineLists = new List<List<CombineInstance>>();
 		int vertexCount = 0;
 		combineLists.Add(new List<CombineInstance>());
+
 		for (int i = 0; i < combine.Count; i++)
 		{
 			vertexCount += combine[i].mesh.vertexCount;
 			if (vertexCount > 65536)
 			{
 				vertexCount = 0;
-				combineLists.Add(new List<CombineInstance>());
+				combineLists.Add(new List<CombineInstance>());	// Breaking the mesh to new mesh if the vertex count increases than the limit.
 				i--;
 			}
 			else
 			{
-				combineLists.Last().Add(combine[i]);
+				combineLists.Last().Add(combine[i]);  // if it doesnt exceed the mesh count putting the mesh in the last to continue added verts.
 			}
 		}
 
-		Transform meshys = new GameObject("Meshys").transform;
+		int numberChunk = 1;
+		Transform meshys = new GameObject("Terrian").transform;
 		meshys.transform.parent = this.gameObject.transform;
-		foreach (List<CombineInstance> list in combineLists)
+
+		foreach (List<CombineInstance> list in combineLists) // Creating as many chunks required for the entire Terrian
 		{
-			GameObject g = new GameObject("Meshy");
+			numberChunk++;
+			GameObject g = new GameObject("Part "+numberChunk);
 			g.transform.parent = meshys;
 			MeshFilter mf = g.AddComponent<MeshFilter>();
 			MeshRenderer mr = g.AddComponent<MeshRenderer>();
@@ -189,14 +194,15 @@ public class TerrianGenerator : MonoBehaviour
 		}
 		#endregion
 
-		#region Destroying The Active Cubes
+		#region Part of Older Version
+		/*
 		for (int i = 0; i < this.transform.childCount; i++)
 		{
 			if (this.transform.GetChild(i).gameObject.tag == "TestSubjects")
 			{
 				Destroy(this.transform.GetChild(i).gameObject);
 			}
-		}
+		}*/
 		#endregion
 	}
 
@@ -212,13 +218,13 @@ public class TerrianGenerator : MonoBehaviour
 		{
 			if (Input.GetKeyDown(KeyCode.KeypadPlus))
 			{
-				xp += 0.1f;
+				noisePosition.x += 0.1f;
 				generator();
 			}
 
 			if (Input.GetKeyDown(KeyCode.KeypadMinus))
 			{
-				xp -= 0.1f;
+				noisePosition.x -= 0.1f;
 				generator();
 			}
 		}
@@ -227,13 +233,13 @@ public class TerrianGenerator : MonoBehaviour
 		{
 			if (Input.GetKeyDown(KeyCode.KeypadPlus))
 			{
-				yp += 0.1f;
+				noisePosition.y += 0.1f;
 				generator();
 			}
 
 			if (Input.GetKeyDown(KeyCode.KeypadMinus))
 			{
-				yp -= 0.1f;
+				noisePosition.y -= 0.1f;
 				generator();
 			}
 		}
@@ -242,13 +248,13 @@ public class TerrianGenerator : MonoBehaviour
 		{
 			if (Input.GetKeyDown(KeyCode.KeypadPlus))
 			{
-				zp += 0.1f;
+				noisePosition.z += 0.1f;
 				generator();
 			}
 
 			if (Input.GetKeyDown(KeyCode.KeypadMinus))
 			{
-				zp -= 0.1f;
+				noisePosition.z -= 0.1f;
 				generator();
 			}
 		}
@@ -268,5 +274,17 @@ public class TerrianGenerator : MonoBehaviour
 		float abc = ab + bc + ac + ba + cb + ca;
 
 		return abc / 6f;
+	}
+}
+
+public class Cell
+{
+	public bool inrange;
+	public bool needed;
+
+	public Cell(bool a, bool b)
+	{
+		inrange = a;
+		needed = b;
 	}
 }
