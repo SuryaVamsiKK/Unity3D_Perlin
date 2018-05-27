@@ -44,11 +44,6 @@ public class TerrianGenerator : MonoBehaviour
 		MeshFilter blockMesh = Instantiate(blocks, Vector3.zero, Quaternion.identity).GetComponent<MeshFilter>();
 		blockMesh.transform.parent = this.gameObject.transform;
 
-		for (int i = 0; i < this.transform.childCount; i++)
-		{
-			Destroy(this.transform.GetChild(i).gameObject);
-		}
-
 		#region Perline Noise Application on the Gird of Cubes
 		for (int x = 0; x < chunkSize; x++)
 		{
@@ -114,7 +109,7 @@ public class TerrianGenerator : MonoBehaviour
 		}
 		#endregion
 
-
+		#region Switching off the inner cubes
 		for (int x = 0; x < chunkSize; x++)
 		{
 			for (int y = 0; y < chunkSize; y++)
@@ -141,6 +136,7 @@ public class TerrianGenerator : MonoBehaviour
 				}
 			}
 		}
+		#endregion
 
 		#region Vertices Feeding
 		for (int x = 0; x < chunkSize; x++)
