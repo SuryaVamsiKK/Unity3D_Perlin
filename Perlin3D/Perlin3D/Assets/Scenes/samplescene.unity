@@ -142,12 +142,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   blocks: {fileID: 1900134961381324, guid: 4fbb33c52b3396d41bb991b63c724c0b, type: 2}
   material: {fileID: 2100000, guid: d9c0b23503c7c9c498d917ba2f969b9b, type: 2}
+  voxlate: 0
+  visualize: 1
   noiseScale: 70
   readableValue: 0.5
   noisePosition: {x: 0, y: 0, z: 0}
-  chunkSize: 70
+  chunkSize: 25
   range: 10
-  sphere: 1
+  sphere: 0
 --- !u!4 &279570494
 Transform:
   m_ObjectHideFlags: 0

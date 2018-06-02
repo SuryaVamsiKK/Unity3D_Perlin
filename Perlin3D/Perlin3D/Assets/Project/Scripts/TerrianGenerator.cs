@@ -9,6 +9,8 @@ public class TerrianGenerator : MonoBehaviour
 	[SerializeField]
 	private GameObject blocks;
 	public Material material;
+	public bool voxlate = false;
+	public bool visualize = true;
 
 	[Header ("Noise Values")]
 	[SerializeField]
@@ -21,16 +23,19 @@ public class TerrianGenerator : MonoBehaviour
 	public int chunkSize = 30;
 	public float range;
 
+
 	public bool sphere = false;
 	private Cell[,,] ListofGameobjects;
 
 	private List<Cell>[,,] Listofneighbours;
+	private List<Cell>[,,] Listofallaround;
 
 	void Awake()
 	{
 		noiseScale = noiseScale * 0.001f;
 		ListofGameobjects = new Cell[chunkSize, chunkSize, chunkSize];
 		Listofneighbours = new List<Cell>[chunkSize, chunkSize, chunkSize];
+		Listofallaround = new List<Cell>[chunkSize, chunkSize, chunkSize];
 		generator();
 	}
 
@@ -53,8 +58,9 @@ public class TerrianGenerator : MonoBehaviour
 			{
 				for (int z = 0; z < chunkSize; z++)
 				{
-					ListofGameobjects[x, y, z] = new Cell(false, true);
+					ListofGameobjects[x, y, z] = new Cell(false, true, new Vector3(x,y,z));
 					Listofneighbours[x, y, z] = new List<Cell>();
+					Listofallaround[x, y, z] = new List<Cell>();
 
 					float gen = Perlin3D(x * noiseScale + noisePosition.x, y * noiseScale + noisePosition.y, z * noiseScale + noisePosition.z);	// pussing the generated perlin value by the method written below.
 					Mathf.Round(gen);
@@ -110,6 +116,66 @@ public class TerrianGenerator : MonoBehaviour
 		}
 		#endregion
 
+		#region Lines
+
+		#region Neighbour Assignment with corner Assignment
+
+		for (int x = 0; x < chunkSize; x++)
+		{
+			for (int y = 0; y < chunkSize; y++)
+			{
+				for (int z = 0; z < chunkSize; z++)
+				{
+				//	if (x == 0 || y == 0 || z == 0 || x == (chunkSize - 1) || y == (chunkSize - 1) || z == (chunkSize - 1))
+				//	{
+				//		goto ot;
+				//	}
+					
+					if (x < (chunkSize - 1)) Listofallaround[x, y, z].Add(ListofGameobjects[x + 1, y, z]);
+					if (x > 0)Listofallaround[x, y, z].Add(ListofGameobjects[x - 1, y, z]);
+
+					if (y < (chunkSize - 1)) Listofallaround[x, y, z].Add(ListofGameobjects[x, y + 1, z]);
+					if (y > 0) Listofallaround[x, y, z].Add(ListofGameobjects[x, y - 1, z]);
+
+					if (z < (chunkSize - 1)) Listofallaround[x, y, z].Add(ListofGameobjects[x, y, z + 1]);
+					if (z > 0) Listofallaround[x, y, z].Add(ListofGameobjects[x, y, z - 1]);
+
+
+					if (x < (chunkSize - 1) && y < (chunkSize - 1))						    { Listofallaround[x, y, z].Add(ListofGameobjects[x + 1, y + 1, z]); }
+					if (x < (chunkSize - 1) && y > 0)									    { Listofallaround[x, y, z].Add(ListofGameobjects[x + 1, y - 1, z]); }
+					if (x < (chunkSize - 1) && y < (chunkSize - 1) && z < (chunkSize - 1))  { Listofallaround[x, y, z].Add(ListofGameobjects[x + 1, y + 1, z + 1]); }
+					if (x < (chunkSize - 1) && y < (chunkSize - 1) && z > 0)				{ Listofallaround[x, y, z].Add(ListofGameobjects[x + 1, y + 1, z - 1]); }
+					if (x < (chunkSize - 1) && y > 0 && z < (chunkSize - 1))				{ Listofallaround[x, y, z].Add(ListofGameobjects[x + 1, y - 1, z + 1]); }
+					if (x < (chunkSize - 1) && y > 0 && z > 0)								{ Listofallaround[x, y, z].Add(ListofGameobjects[x + 1, y - 1, z - 1]); }
+					if (x < (chunkSize - 1) && z < (chunkSize - 1))							{ Listofallaround[x, y, z].Add(ListofGameobjects[x + 1, y, z + 1]); }
+					if (x < (chunkSize - 1) && z > 0)										{ Listofallaround[x, y, z].Add(ListofGameobjects[x + 1, y, z - 1]); }
+
+					if (x > 0 && y < (chunkSize - 1))										{ Listofallaround[x, y, z].Add(ListofGameobjects[x - 1, y + 1, z]); }
+					if (x > 0 && y > 0)														{ Listofallaround[x, y, z].Add(ListofGameobjects[x - 1, y - 1, z]); }
+					if (x > 0 && y < (chunkSize - 1) && z < (chunkSize - 1))				{ Listofallaround[x, y, z].Add(ListofGameobjects[x - 1, y + 1, z + 1]); }
+					if (x > 0 && y < (chunkSize - 1) && z > 0)								{ Listofallaround[x, y, z].Add(ListofGameobjects[x - 1, y + 1, z - 1]); }
+					if (x > 0 && y > 0 && z < (chunkSize - 1))								{ Listofallaround[x, y, z].Add(ListofGameobjects[x - 1, y - 1, z + 1]); }
+					if (x > 0 && y > 0 && z > 0)											{ Listofallaround[x, y, z].Add(ListofGameobjects[x - 1, y - 1, z - 1]); }
+					if (x > 0 && z < (chunkSize - 1))										{ Listofallaround[x, y, z].Add(ListofGameobjects[x - 1, y, z + 1]); }
+					if (x > 0 && z > 0)														{ Listofallaround[x, y, z].Add(ListofGameobjects[x - 1, y, z - 1]); }
+
+					if (y < (chunkSize - 1) && z < (chunkSize - 1))							{ Listofallaround[x, y, z].Add(ListofGameobjects[x, y + 1, z + 1]); }
+					if (y < (chunkSize - 1) && z > 0)										{ Listofallaround[x, y, z].Add(ListofGameobjects[x, y + 1, z - 1]); }
+
+					if (y > 0 && z < (chunkSize - 1))										{ Listofallaround[x, y, z].Add(ListofGameobjects[x, y - 1, z + 1]); }
+					if (y > 0 && z > 0)														{ Listofallaround[x, y, z].Add(ListofGameobjects[x, y - 1, z - 1]); }
+
+				//	ot:;
+					
+
+				}
+			}
+		}
+
+		#endregion
+
+		#endregion
+
 		#region Switching off the inner cubes
 		for (int x = 0; x < chunkSize; x++)
 		{
@@ -132,68 +198,81 @@ public class TerrianGenerator : MonoBehaviour
 
 					if (i == 6)
 					{
-						ListofGameobjects[x,y,z].needed = false;			// these are the possible cube positions where the cubes are totally covered and not needed
+						ListofGameobjects[x, y, z].needed = false;          // these are the possible cube positions where the cubes are totally covered and not needed
 					}
-				}
-			}
-		}
-		#endregion
 
-		#region Vertices Feeding
-		for (int x = 0; x < chunkSize; x++)
-		{
-			for (int y = 0; y < chunkSize; y++)
-			{
-				for (int z = 0; z < chunkSize; z++)
-				{
-					if (ListofGameobjects[x, y, z].inrange == true && ListofGameobjects[x, y, z].needed == true) // Printing The Cube at the correct positions for the Mesh.
+					if (x == 0 || y == 0 || z == 0 || x == (chunkSize - 1) || y == (chunkSize - 1) || z == (chunkSize - 1))
 					{
-						#region Mesh Creation
-						blockMesh.transform.position = new Vector3(x, y, z);
-						combine.Add(new CombineInstance { mesh = blockMesh.sharedMesh, transform = blockMesh.transform.localToWorldMatrix });
-						#endregion
+						ListofGameobjects[x, y, z].needed = false;      // negating the outercube 
 					}
 				}
 			}
 		}
 		#endregion
+		
 
-		#region Mesh Generation
-		List<List<CombineInstance>> combineLists = new List<List<CombineInstance>>();
-		int vertexCount = 0;
-		combineLists.Add(new List<CombineInstance>());
-
-		for (int i = 0; i < combine.Count; i++)
+		if (voxlate == true)
 		{
-			vertexCount += combine[i].mesh.vertexCount;
-			if (vertexCount > 65536)
+			#region Voxel Mesh Generation
+
+			#region Vertices Feeding
+			for (int x = 0; x < chunkSize; x++)
 			{
-				vertexCount = 0;
-				combineLists.Add(new List<CombineInstance>());	// Breaking the mesh to new mesh if the vertex count increases than the limit.
-				i--;
+				for (int y = 0; y < chunkSize; y++)
+				{
+					for (int z = 0; z < chunkSize; z++)
+					{
+						if (ListofGameobjects[x, y, z].inrange == true && ListofGameobjects[x, y, z].needed == true) // Printing The Cube at the correct positions for the Mesh.
+						{
+							#region Mesh Creation
+							blockMesh.transform.position = new Vector3(x, y, z);
+							combine.Add(new CombineInstance { mesh = blockMesh.sharedMesh, transform = blockMesh.transform.localToWorldMatrix });
+							#endregion
+						}
+					}
+				}
 			}
-			else
+			#endregion
+
+			#region Mesh Generation
+			List<List<CombineInstance>> combineLists = new List<List<CombineInstance>>();
+			int vertexCount = 0;
+			combineLists.Add(new List<CombineInstance>());
+
+			for (int i = 0; i < combine.Count; i++)
 			{
-				combineLists.Last().Add(combine[i]);  // if it doesnt exceed the mesh count putting the mesh in the last to continue added verts.
+				vertexCount += combine[i].mesh.vertexCount;
+				if (vertexCount > 65536)
+				{
+					vertexCount = 0;
+					combineLists.Add(new List<CombineInstance>());  // Breaking the mesh to new mesh if the vertex count increases than the limit.
+					i--;
+				}
+				else
+				{
+					combineLists.Last().Add(combine[i]);  // if it doesnt exceed the mesh count putting the mesh in the last to continue added verts.
+				}
 			}
+
+			int numberChunk = 1;
+			Transform meshys = new GameObject("Terrian").transform;
+			meshys.transform.parent = this.gameObject.transform;
+
+			foreach (List<CombineInstance> list in combineLists) // Creating as many chunks required for the entire Terrian
+			{
+				numberChunk++;
+				GameObject g = new GameObject("Part " + numberChunk);
+				g.transform.parent = meshys;
+				MeshFilter mf = g.AddComponent<MeshFilter>();
+				MeshRenderer mr = g.AddComponent<MeshRenderer>();
+				mr.material = material;
+				mf.mesh.CombineMeshes(list.ToArray());
+			}
+			#endregion
+
+			#endregion
 		}
-
-		int numberChunk = 1;
-		Transform meshys = new GameObject("Terrian").transform;
-		meshys.transform.parent = this.gameObject.transform;
-
-		foreach (List<CombineInstance> list in combineLists) // Creating as many chunks required for the entire Terrian
-		{
-			numberChunk++;
-			GameObject g = new GameObject("Part "+numberChunk);
-			g.transform.parent = meshys;
-			MeshFilter mf = g.AddComponent<MeshFilter>();
-			MeshRenderer mr = g.AddComponent<MeshRenderer>();
-			mr.material = material;
-			mf.mesh.CombineMeshes(list.ToArray());
-		}
-		#endregion
-
+		
 		#region Part of Older Version
 		/*
 		for (int i = 0; i < this.transform.childCount; i++)
@@ -208,6 +287,31 @@ public class TerrianGenerator : MonoBehaviour
 
 	void Update()
 	{
+		if (visualize == true)
+		{
+			#region Vertices Feeding for lines
+
+			for (int x = 0; x < chunkSize; x++)
+			{
+				for (int y = 0; y < chunkSize; y++)
+				{
+					for (int z = 0; z < chunkSize; z++)
+					{
+						if (ListofGameobjects[x, y, z].inrange == true && ListofGameobjects[x, y, z].needed == true) // Printing The Cube at the correct positions for the Mesh.
+						{
+							for (int i = 0; i < Listofallaround[x, y, z].Count; i++)
+							{
+								if (Listofallaround[x, y, z][i].inrange == true && Listofallaround[x, y, z][i].needed == true)
+								{
+									Debug.DrawLine(ListofGameobjects[x, y, z].pos, Listofallaround[x, y, z][i].pos, Color.red);
+								}
+							}
+						}
+					}
+				}
+			}
+			#endregion
+		}
 
 		if (Input.GetKeyDown(KeyCode.G))
 		{
@@ -281,9 +385,13 @@ public class Cell
 {
 	public bool inrange;
 	public bool needed;
+	public bool toface;
+	public Vector3 pos;
 
-	public Cell(bool a, bool b)
+	public Cell(bool a, bool b, Vector3 postion)
 	{
+		pos = postion;
+		toface = false;
 		inrange = a;
 		needed = b;
 	}
