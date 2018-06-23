@@ -58,7 +58,7 @@ public class TerrianGenerator : MonoBehaviour
 			{
 				for (int z = 0; z < chunkSize; z++)
 				{
-					ListofGameobjects[x, y, z] = new Cell(false, true, new Vector3(x,y,z));
+					ListofGameobjects[x, y, z] = new Cell(false, true, new Vector3(x,y,z), true, "" + x + ":" + y + ":" + z);
 					Listofneighbours[x, y, z] = new List<Cell>();
 					Listofallaround[x, y, z] = new List<Cell>();
 
@@ -125,12 +125,7 @@ public class TerrianGenerator : MonoBehaviour
 			for (int y = 0; y < chunkSize; y++)
 			{
 				for (int z = 0; z < chunkSize; z++)
-				{
-				//	if (x == 0 || y == 0 || z == 0 || x == (chunkSize - 1) || y == (chunkSize - 1) || z == (chunkSize - 1))
-				//	{
-				//		goto ot;
-				//	}
-					
+				{					
 					if (x < (chunkSize - 1)) Listofallaround[x, y, z].Add(ListofGameobjects[x + 1, y, z]);
 					if (x > 0)Listofallaround[x, y, z].Add(ListofGameobjects[x - 1, y, z]);
 
@@ -301,11 +296,12 @@ public class TerrianGenerator : MonoBehaviour
 						{
 							for (int i = 0; i < Listofallaround[x, y, z].Count; i++)
 							{
-								if (Listofallaround[x, y, z][i].inrange == true && Listofallaround[x, y, z][i].needed == true)
+								if (Listofallaround[x, y, z][i].inrange == true && Listofallaround[x, y, z][i].needed == true && Listofallaround[x, y, z][i].neighbours == true)
 								{
 									Debug.DrawLine(ListofGameobjects[x, y, z].pos, Listofallaround[x, y, z][i].pos, Color.red);
 								}
 							}
+							
 						}
 					}
 				}
@@ -387,9 +383,13 @@ public class Cell
 	public bool needed;
 	public bool toface;
 	public Vector3 pos;
+	public bool neighbours;
+	public string ID;
 
-	public Cell(bool a, bool b, Vector3 postion)
+	public Cell(bool a, bool b, Vector3 postion, bool neigh, string id)
 	{
+		ID = id;
+		neighbours = neigh;
 		pos = postion;
 		toface = false;
 		inrange = a;
