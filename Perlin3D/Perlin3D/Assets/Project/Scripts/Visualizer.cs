@@ -28,6 +28,17 @@ public class Visualizer : MonoBehaviour {
 		  { 6, 7, 11},
 		};
 
+	int[,] neighbours =
+		{ { 1, 0, 3, 3, 4, 8},
+		  { 0, 0, 2, 1, 5, 9},
+		  { 1, 1, 6, 10, 3, 2},
+		  { 0, 3, 2, 2, 7, 11},
+		  { 0, 8, 5, 4, 7, 7},
+		  { 1, 9, 6, 5, 4, 4},
+		  { 5, 5, 7, 6, 2, 10},
+		  { 6, 7, 3, 11, 6, 6},
+		};
+
 	// Use this for initialization
 	void Start () {
 		
@@ -165,134 +176,24 @@ public class Visualizer : MonoBehaviour {
 			e[e2] = false;
 			e[e3] = false;
 
-			if (vert == 0)
+			for (int i = 0; i < 8; i++)
 			{
-				if (v[1] == true)
+				if (vert == i)
 				{
-					e[0] = true;
-				}
-				if (v[3] == true)
-				{
-					e[3] = true;
-				}
-				if (v[4] == true)
-				{
-					e[8] = true;
+					if (v[neighbours[i, 0]] == true)
+					{
+						e[neighbours[i, 1]] = true;
+					}
+					if (v[neighbours[i, 2]] == true)
+					{
+						e[neighbours[i, 3]] = true;
+					}
+					if (v[neighbours[i, 4]] == true)
+					{
+						e[neighbours[i, 5]] = true;
+					}
 				}
 			}
-
-			if (vert == 1)
-			{
-				if (v[0] == true)
-				{
-					e[0] = true;
-				}
-				if (v[2] == true)
-				{
-					e[1] = true;
-				}
-				if (v[5] == true)
-				{
-					e[9] = true;
-				}
-			}
-
-			if (vert == 2)
-			{
-				if (v[1] == true)
-				{
-					e[1] = true;
-				}
-				if (v[6] == true)
-				{
-					e[10] = true;
-				}
-				if (v[3] == true)
-				{
-					e[2] = true;
-				}
-			}
-
-			if (vert == 3)
-			{
-				if (v[0] == true)
-				{
-					e[3] = true;
-				}
-				if (v[2] == true)
-				{
-					e[2] = true;
-				}
-				if (v[7] == true)
-				{
-					e[11] = true;
-				}
-			}
-
-			if (vert == 4)
-			{
-				if (v[0] == true)
-				{
-					e[8] = true;
-				}
-				if (v[5] == true)
-				{
-					e[4] = true;
-				}
-				if (v[7] == true)
-				{
-					e[7] = true;
-				}
-			}
-
-			if (vert == 5)
-			{
-				if (v[1] == true)
-				{
-					e[9] = true;
-				}
-				if (v[6] == true)
-				{
-					e[5] = true;
-				}
-				if (v[4] == true)
-				{
-					e[4] = true;
-				}
-			}
-
-			if (vert == 6)
-			{
-				if (v[5] == true)
-				{
-					e[5] = true;
-				}
-				if (v[7] == true)
-				{
-					e[6] = true;
-				}
-				if (v[2] == true)
-				{
-					e[10] = true;
-				}
-			}
-
-			if (vert == 7)
-			{
-				if (v[4] == true)
-				{
-					e[7] = true;
-				}
-				if (v[3] == true)
-				{
-					e[11] = true;
-				}
-				if (v[6] == true)
-				{
-					e[6] = true;
-				}
-			}
-
 		}
 	}
 }
