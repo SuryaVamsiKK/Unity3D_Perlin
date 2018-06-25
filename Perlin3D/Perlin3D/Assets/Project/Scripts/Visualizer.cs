@@ -8,6 +8,7 @@ public class Visualizer : MonoBehaviour {
 	public bool[] v = new bool[8];
 	List<int> drawable = new List<int>();
 
+	#region Permutations and Combinations
 	int[] edgeTable ={
 0x0  , 0x109, 0x203, 0x30a, 0x406, 0x50f, 0x605, 0x70c,
 0x80c, 0x905, 0xa0f, 0xb06, 0xc0a, 0xd03, 0xe09, 0xf00,
@@ -298,13 +299,24 @@ public class Visualizer : MonoBehaviour {
 {0, 9, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
 {0, 3, 8, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
 {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}};
+	#endregion
 
-	int y = 10;
-
-	bool IsBitvise(int b, int pos)
-	{
-		return ((b & pos) == pos);
-	}
+	#region General Information
+	//                 v7_______e6_____________v6
+	//                  /|                    /|
+	//                 / |                   / |
+	//              e7/  |                e5/  |
+	//               /___|______e4_________/   |
+	//            v4|    |                 |v5 |e10
+	//              |    |                 |   |
+	//              |    |e11              |e9 |
+	//            e8|    |                 |   |
+	//              |    |_________________|___|
+	//              |   / v3      e2       |   /v2
+	//              |  /                   |  /
+	//              | /e3                  | /e1
+	//              |/_____________________|/
+	//              v0         e0          v1
 
 	//				All the neightbouring edges
 	//				v0  -----  e0		e3		e8
@@ -325,7 +337,7 @@ public class Visualizer : MonoBehaviour {
 	//				v5  -----  v4		v6		v1
 	//				v6  -----  v5		v7		v2
 	//				v7  -----  v6		v4		v3
-
+	#endregion
 
 	#region Neighbour Tables
 
@@ -352,19 +364,6 @@ public class Visualizer : MonoBehaviour {
 		};
 
 	#endregion
-
-	void Start () {
-		
-	}
-	
-	void Update () {
-		
-	}
-
-	private void OnValidate()
-	{
-		
-	}
 
 	private void OnDrawGizmos()
 	{
@@ -402,7 +401,6 @@ public class Visualizer : MonoBehaviour {
 				Gizmos.DrawSphere(transform.GetChild(1).GetChild(i).position, this.gameObject.GetComponent<ColorCode>().edgeSize);
 			}
 
-
 			for (int i = 0; i < transform.GetChild(0).childCount; i++)
 			{
 				if (v[i] == true)
@@ -430,142 +428,59 @@ public class Visualizer : MonoBehaviour {
 
 	void Evaluation()
 	{
+		//Debugging the enabled Vertices from the choosne edges.
 		for (int i = 0; i < 8; i++)
 		{
 			Evaluate_Boolean(i, edgeNeighbours[i, 0], edgeNeighbours[i, 1], edgeNeighbours[i, 2]);
 		}
 
-		//Drawabality();
-
-
-		#region olderversion
-
-		//int temp = 0;
-		//if (drawable.Count != 0)
-		//{
-		//	for (int j = 0; j < temp; j++)
-		//	{
-		//		for (int i = 0; i < 3; i++)
-		//		{
-		//			Transform one = null;
-		//			Transform two = null;
-		//			one = transform.GetChild(1).GetChild(drawable[i]);
-		//			if (i != 3 - 1)
-		//			{
-		//				two = transform.GetChild(1).GetChild(drawable[i + 1]);
-		//			}
-		//			else
-		//			{
-		//				two = transform.GetChild(1).GetChild(drawable[0]);
-		//			}
-		//			Gizmos.color = this.gameObject.GetComponent<ColorCode>().MeshColor;
-		//			Gizmos.DrawLine(one.position, two.position);
-		//		}
-		//	}
-		//}
-
-		#endregion
-
-		//                 v7_______e6_____________v6
-		//                  /|                    /|
-		//                 / |                   / |
-		//              e7/  |                e5/  |
-		//               /___|______e4_________/   |
-		//            v4|    |                 |v5 |e10
-		//              |    |                 |   |
-		//              |    |e11              |e9 |
-		//            e8|    |                 |   |
-		//              |    |_________________|___|
-		//              |   / v3      e2       |   /v2
-		//              |  /                   |  /
-		//              | /e3                  | /e1
-		//              |/_____________________|/
-		//              v0         e0          v1
-
-		//1 tri = 3 verts
-		//2 tris = 4 verts
-		//3 tris = 5 verts
-		//4 tris = 6 verts
+		#region permutational Calculations.
 
 		int cubeindex = 0;
-		float isolevel = 1f;
+		float isoLevel = 1f;
 
-		if ((v[0] ? 1 : 0) < isolevel) cubeindex |= 1;
-		if ((v[1] ? 1 : 0) < isolevel) cubeindex |= 2;
-		if ((v[2] ? 1 : 0) < isolevel) cubeindex |= 4;
-		if ((v[3] ? 1 : 0) < isolevel) cubeindex |= 8;
-		if ((v[4] ? 1 : 0) < isolevel) cubeindex |= 16;
-		if ((v[5] ? 1 : 0) < isolevel) cubeindex |= 32;
-		if ((v[6] ? 1 : 0) < isolevel) cubeindex |= 64;
-		if ((v[7] ? 1 : 0) < isolevel) cubeindex |= 128;
+		if ((v[0] ? 1 : 0) < isoLevel) cubeindex |= 1;
+		if ((v[1] ? 1 : 0) < isoLevel) cubeindex |= 2;
+		if ((v[2] ? 1 : 0) < isoLevel) cubeindex |= 4;
+		if ((v[3] ? 1 : 0) < isoLevel) cubeindex |= 8;
+		if ((v[4] ? 1 : 0) < isoLevel) cubeindex |= 16;
+		if ((v[5] ? 1 : 0) < isoLevel) cubeindex |= 32;
+		if ((v[6] ? 1 : 0) < isoLevel) cubeindex |= 64;
+		if ((v[7] ? 1 : 0) < isoLevel) cubeindex |= 128;
 
 		int[] vertlist = new int[12];
-
-		if (IsBitSet(edgeTable[cubeindex], 1))
+		if (isVertEnabled(edgeTable[cubeindex], 1))
 			vertlist[0] = 0;
-		if (IsBitSet(edgeTable[cubeindex], 2))
+		if (isVertEnabled(edgeTable[cubeindex], 2))
 			vertlist[1] = 1;
-		if (IsBitSet(edgeTable[cubeindex], 4))
+		if (isVertEnabled(edgeTable[cubeindex], 4))
 			vertlist[2] = 2;
-		if (IsBitSet(edgeTable[cubeindex], 8))
+		if (isVertEnabled(edgeTable[cubeindex], 8))
 			vertlist[3] = 3;
-		if (IsBitSet(edgeTable[cubeindex], 16))
+		if (isVertEnabled(edgeTable[cubeindex], 16))
 			vertlist[4] = 4;
-		if (IsBitSet(edgeTable[cubeindex], 32))
+		if (isVertEnabled(edgeTable[cubeindex], 32))
 			vertlist[5] = 5;
-		if (IsBitSet(edgeTable[cubeindex], 64))
+		if (isVertEnabled(edgeTable[cubeindex], 64))
 			vertlist[6] = 6;
-		if (IsBitSet(edgeTable[cubeindex], 128))
+		if (isVertEnabled(edgeTable[cubeindex], 128))
 			vertlist[7] = 7;
-		if (IsBitSet(edgeTable[cubeindex], 256))
+		if (isVertEnabled(edgeTable[cubeindex], 256))
 			vertlist[8] = 8;
-		if (IsBitSet(edgeTable[cubeindex], 512))
+		if (isVertEnabled(edgeTable[cubeindex], 512))
 			vertlist[9] = 9;
-		if (IsBitSet(edgeTable[cubeindex], 1024))
+		if (isVertEnabled(edgeTable[cubeindex], 1024))
 			vertlist[10] = 10;
-		if (IsBitSet(edgeTable[cubeindex], 2048))
+		if (isVertEnabled(edgeTable[cubeindex], 2048))
 			vertlist[11] = 11;
+		#endregion
 
-		for (int i = 0; i < vertlist.Length; i++)
-		{
-			//Debug.Log(i + " : " + vertlist[i]);
-		}
+		//Drawing the triangles based on the choosne vertices and Debugging the vertice names.
 		for (int i = 0; triTable[cubeindex,i] != -1; i += 3)
 		{
 			Debug.Log(vertlist[triTable[cubeindex, i]] + " : " + vertlist[triTable[cubeindex, i + 1]] + " : " + vertlist[triTable[cubeindex, i + 2]]);
 			triDraw(vertlist[triTable[cubeindex, i]], vertlist[triTable[cubeindex, i + 1]], vertlist[triTable[cubeindex, i + 2]]);
 		}
-
-		#region old
-		//if (drawable.Count != 0)
-		//{
-		//	if (drawable.Count == 3)
-		//	{
-		//		triDraw(0, 1, 2);
-		//	}
-
-		//	if (drawable.Count == 4)
-		//	{
-		//		triDraw(0, 1, 2);
-		//		triDraw(0, 2, 3);
-		//	}
-
-		//	if (drawable.Count == 5)
-		//	{
-		//		triDraw(0, 1, 2);
-		//		triDraw(0, 1, 3);
-		//		triDraw(3, 2, 4);
-		//	}
-
-		//	if (drawable.Count == 6)
-		//	{
-		//		triDraw(0, 1, 2);
-		//		triDraw(2, 1, 3);
-		//		triDraw(3, 2, 4);
-		//		triDraw(4, 3, 5);
-		//	}
-		//}
-		#endregion
 	}
 
 	void Evaluate_Boolean(int vert, int e1, int e2, int e3)
@@ -629,18 +544,6 @@ public class Visualizer : MonoBehaviour {
 		}
 	}
 
-	//void Drawabality()
-	//{
-	//	drawable = new List<int>();
-	//	for (int i = 0; i < e.Length; i++)
-	//	{
-	//		if (e[i] == true)
-	//		{
-	//			drawable.Add(i);
-	//		}
-	//	}
-	//}
-
 	void triDraw(int p1, int p2, int p3)
 	{
 		Gizmos.color = this.gameObject.GetComponent<ColorCode>().MeshColor;
@@ -649,8 +552,8 @@ public class Visualizer : MonoBehaviour {
 		Gizmos.DrawLine(transform.GetChild(1).GetChild(p3).position, transform.GetChild(1).GetChild(p1).position);
 	}
 
-	bool IsBitSet(int b, int pos)
+	bool isVertEnabled(int edgetableindex, int key)
 	{
-		return ((b & pos) == pos);
+		return ((edgetableindex & key) == key);
 	}
 }
