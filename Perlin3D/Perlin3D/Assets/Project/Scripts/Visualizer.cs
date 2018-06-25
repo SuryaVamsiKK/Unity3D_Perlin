@@ -5,8 +5,12 @@ using UnityEngine;
 public class Visualizer : MonoBehaviour {
 
 	bool[] e = new bool[12];
-	public bool[] v = new bool[8];
+	public Node[] v = new Node[8];
+
 	List<int> drawable = new List<int>();
+	public bool debugCube = false;
+	public bool debugMesh = false;
+	public bool edgeLog = false;
 
 	#region Permutations and Combinations
 	int[] edgeTable ={
@@ -369,50 +373,57 @@ public class Visualizer : MonoBehaviour {
 	{
 		if (this.transform.childCount >= 2)
 		{
-			#region Edges
-			drawline(transform.GetChild(0).GetChild(0), transform.GetChild(0).GetChild(1));
-			drawline(transform.GetChild(0).GetChild(0), transform.GetChild(0).GetChild(4));
-			drawline(transform.GetChild(0).GetChild(0), transform.GetChild(0).GetChild(3));
-			drawline(transform.GetChild(0).GetChild(1), transform.GetChild(0).GetChild(2));
-			drawline(transform.GetChild(0).GetChild(1), transform.GetChild(0).GetChild(5));
-			drawline(transform.GetChild(0).GetChild(2), transform.GetChild(0).GetChild(6));
-			drawline(transform.GetChild(0).GetChild(2), transform.GetChild(0).GetChild(3));
-			drawline(transform.GetChild(0).GetChild(3), transform.GetChild(0).GetChild(7));
-			drawline(transform.GetChild(0).GetChild(4), transform.GetChild(0).GetChild(5));
-			drawline(transform.GetChild(0).GetChild(4), transform.GetChild(0).GetChild(7));
-			drawline(transform.GetChild(0).GetChild(6), transform.GetChild(0).GetChild(7));
-			drawline(transform.GetChild(0).GetChild(6), transform.GetChild(0).GetChild(5));
-			#endregion
 
-			#region Verts and Mids
+			#region Debugging
 
-			Evaluation();
-
-			for (int i = 0; i < transform.GetChild(1).childCount; i++)
+			if (debugCube == true)
 			{
-				if (e[i] == true)
+				#region Edges
+				drawline(transform.GetChild(0).GetChild(0), transform.GetChild(0).GetChild(1));
+				drawline(transform.GetChild(0).GetChild(0), transform.GetChild(0).GetChild(4));
+				drawline(transform.GetChild(0).GetChild(0), transform.GetChild(0).GetChild(3));
+				drawline(transform.GetChild(0).GetChild(1), transform.GetChild(0).GetChild(2));
+				drawline(transform.GetChild(0).GetChild(1), transform.GetChild(0).GetChild(5));
+				drawline(transform.GetChild(0).GetChild(2), transform.GetChild(0).GetChild(6));
+				drawline(transform.GetChild(0).GetChild(2), transform.GetChild(0).GetChild(3));
+				drawline(transform.GetChild(0).GetChild(3), transform.GetChild(0).GetChild(7));
+				drawline(transform.GetChild(0).GetChild(4), transform.GetChild(0).GetChild(5));
+				drawline(transform.GetChild(0).GetChild(4), transform.GetChild(0).GetChild(7));
+				drawline(transform.GetChild(0).GetChild(6), transform.GetChild(0).GetChild(7));
+				drawline(transform.GetChild(0).GetChild(6), transform.GetChild(0).GetChild(5));
+				#endregion
+
+				for (int i = 0; i < transform.GetChild(1).childCount; i++)
 				{
-					Gizmos.color = this.gameObject.GetComponent<ColorCode>().edgeOnColor;
+					if (e[i] == true)
+					{
+						Gizmos.color = this.gameObject.GetComponent<ColorCode>().edgeOnColor;
+					}
+					if (e[i] == false)
+					{
+						Gizmos.color = this.gameObject.GetComponent<ColorCode>().edgeOffColor;
+					}
+					Gizmos.DrawSphere(transform.GetChild(1).GetChild(i).position, this.gameObject.GetComponent<ColorCode>().edgeSize);
 				}
-				if (e[i] == false)
+
+				for (int i = 0; i < transform.GetChild(0).childCount; i++)
 				{
-					Gizmos.color = this.gameObject.GetComponent<ColorCode>().edgeOffColor;
+					if (v[i].vert == true)
+					{
+						Gizmos.color = this.gameObject.GetComponent<ColorCode>().vertOnColor;
+					}
+					if (v[i].vert == false)
+					{
+						Gizmos.color = this.gameObject.GetComponent<ColorCode>().vertOffColor;
+					}
+
+					Gizmos.DrawSphere(transform.GetChild(0).GetChild(i).position, this.gameObject.GetComponent<ColorCode>().vertSize);
 				}
-				Gizmos.DrawSphere(transform.GetChild(1).GetChild(i).position, this.gameObject.GetComponent<ColorCode>().edgeSize);
 			}
 
-			for (int i = 0; i < transform.GetChild(0).childCount; i++)
+			if (debugMesh == true)
 			{
-				if (v[i] == true)
-				{
-					Gizmos.color = this.gameObject.GetComponent<ColorCode>().vertOnColor;
-				}
-				if (v[i] == false)
-				{
-					Gizmos.color = this.gameObject.GetComponent<ColorCode>().vertOffColor;
-				}
-
-				Gizmos.DrawSphere(transform.GetChild(0).GetChild(i).position, this.gameObject.GetComponent<ColorCode>().vertSize);
+				Evaluation();
 			}
 
 			#endregion
@@ -439,14 +450,14 @@ public class Visualizer : MonoBehaviour {
 		int cubeindex = 0;
 		float isoLevel = 1f;
 
-		if ((v[0] ? 1 : 0) < isoLevel) cubeindex |= 1;
-		if ((v[1] ? 1 : 0) < isoLevel) cubeindex |= 2;
-		if ((v[2] ? 1 : 0) < isoLevel) cubeindex |= 4;
-		if ((v[3] ? 1 : 0) < isoLevel) cubeindex |= 8;
-		if ((v[4] ? 1 : 0) < isoLevel) cubeindex |= 16;
-		if ((v[5] ? 1 : 0) < isoLevel) cubeindex |= 32;
-		if ((v[6] ? 1 : 0) < isoLevel) cubeindex |= 64;
-		if ((v[7] ? 1 : 0) < isoLevel) cubeindex |= 128;
+		if ((v[0].vert ? 1 : 0) < isoLevel) cubeindex |= 1;
+		if ((v[1].vert ? 1 : 0) < isoLevel) cubeindex |= 2;
+		if ((v[2].vert ? 1 : 0) < isoLevel) cubeindex |= 4;
+		if ((v[3].vert ? 1 : 0) < isoLevel) cubeindex |= 8;
+		if ((v[4].vert ? 1 : 0) < isoLevel) cubeindex |= 16;
+		if ((v[5].vert ? 1 : 0) < isoLevel) cubeindex |= 32;
+		if ((v[6].vert ? 1 : 0) < isoLevel) cubeindex |= 64;
+		if ((v[7].vert ? 1 : 0) < isoLevel) cubeindex |= 128;
 
 		int[] vertlist = new int[12];
 		if (isVertEnabled(edgeTable[cubeindex], 1))
@@ -478,14 +489,17 @@ public class Visualizer : MonoBehaviour {
 		//Drawing the triangles based on the choosne vertices and Debugging the vertice names.
 		for (int i = 0; triTable[cubeindex,i] != -1; i += 3)
 		{
-			Debug.Log(vertlist[triTable[cubeindex, i]] + " : " + vertlist[triTable[cubeindex, i + 1]] + " : " + vertlist[triTable[cubeindex, i + 2]]);
+			if (edgeLog == true)
+			{
+				Debug.Log(vertlist[triTable[cubeindex, i]] + " : " + vertlist[triTable[cubeindex, i + 1]] + " : " + vertlist[triTable[cubeindex, i + 2]]);
+			}
 			triDraw(vertlist[triTable[cubeindex, i]], vertlist[triTable[cubeindex, i + 1]], vertlist[triTable[cubeindex, i + 2]]);
 		}
 	}
 
 	void Evaluate_Boolean(int vert, int e1, int e2, int e3)
 	{
-		if (v[vert] == true)
+		if (v[vert].vert == true)
 		{
 			// Firstly making all the linked edges true.
 			e[e1] = true;
@@ -497,15 +511,15 @@ public class Visualizer : MonoBehaviour {
 			{
 				if (vert == i)
 				{
-					if (v[vertNeighbours[i, 0]] == true)				// if the neighbour is true then siwtch the link betwwen them off
+					if (v[vertNeighbours[i, 0]].vert == true)				// if the neighbour is true then siwtch the link betwwen them off
 					{
 						e[edgeNeighbours[i, 0]] = false;
 					}
-					if (v[vertNeighbours[i, 1]] == true)
+					if (v[vertNeighbours[i, 1]].vert == true)
 					{
 						e[edgeNeighbours[i, 1]] = false;
 					}
-					if (v[vertNeighbours[i, 2]] == true)
+					if (v[vertNeighbours[i, 2]].vert == true)
 					{
 						e[edgeNeighbours[i, 2]] = false;
 					}
@@ -514,7 +528,7 @@ public class Visualizer : MonoBehaviour {
 			//checking the neighbours based on the integer table above just to reduce the some many if statments.
 		}
 
-		if (v[vert] == false)
+		if (v[vert].vert == false)
 		{
 			// Firstly making all the linked edges false.
 			e[e1] = false;
@@ -526,15 +540,15 @@ public class Visualizer : MonoBehaviour {
 			{
 				if (vert == i)
 				{
-					if (v[vertNeighbours[i, 0]] == true)        // if the neighbour is true then siwtch the link betwwen them back on
+					if (v[vertNeighbours[i, 0]].vert == true)        // if the neighbour is true then siwtch the link betwwen them back on
 					{
 						e[edgeNeighbours[i, 0]] = true;
 					}
-					if (v[vertNeighbours[i, 1]] == true)
+					if (v[vertNeighbours[i, 1]].vert == true)
 					{
 						e[edgeNeighbours[i, 1]] = true;
 					}
-					if (v[vertNeighbours[i, 2]] == true)
+					if (v[vertNeighbours[i, 2]].vert == true)
 					{
 						e[edgeNeighbours[i, 2]] = true;
 					}
@@ -555,5 +569,18 @@ public class Visualizer : MonoBehaviour {
 	bool isVertEnabled(int edgetableindex, int key)
 	{
 		return ((edgetableindex & key) == key);
+	}
+}
+
+[System.Serializable]
+public class Node
+{
+	public int ID;
+	public bool vert;
+
+	public Node(bool verts, int id)
+	{
+		ID = id;
+		vert = verts;
 	}
 }
