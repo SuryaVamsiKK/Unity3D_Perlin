@@ -32,6 +32,17 @@ public class Visualizer : MonoBehaviour {
 	public bool[] e;
 	public bool[] v;
 
+	int[,] combs =
+		{ { 0, 3, 8},
+		  { 0, 1, 9},
+		  { 1, 10, 2},
+		  { 2, 3, 11},
+		  { 8, 7, 4},
+		  { 4, 5, 9},
+		  { 5, 6, 10},
+		  { 6, 7, 11},
+		};
+
 	// Use this for initialization
 	void Start () {
 		
@@ -128,54 +139,15 @@ public class Visualizer : MonoBehaviour {
 		//enabler(7, 6, 7, 11);
 		#region trial one
 
-		if (verts[0] == true)
+		for (int i = 0; i < 8; i++)
 		{
-			v[0] = !v[0];
-			enabler(0, 0, 3, 8);
-			verts[0] = false;
-		}
-		if (verts[1] == true)
-		{
-			v[1] = !v[1];
-			enabler(1, 0, 1, 9);
-			verts[1] = false;
-		}
-		if (verts[2] == true)
-		{
-			v[2] = !v[2];
-			enabler(2, 1, 10, 2);
-			verts[2] = false;
-		}
-		if (verts[3] == true)
-		{
-			v[3] = !v[3];
-			enabler(3, 2, 3, 11);
-			verts[3] = false;
-		}
-		if (verts[4] == true)
-		{
-			v[4] = !v[4];
-			enabler(4, 8, 7, 4);
-			verts[4] = false;
-		}
-		if (verts[5] == true)
-		{
-			v[5] = !v[5];
-			enabler(5, 4, 5, 9);
-			verts[5] = false;
-		}
-		if (verts[6] == true)
-		{
-			v[6] = !v[6];
-			enabler(6, 5, 6, 10);
-			verts[6] = false;
-		}
-		if (verts[7] == true)
-		{
-			v[7] = !v[7];
-			enabler(7, 6, 7, 11);
-			verts[7] = false;
-		}
+			if (verts[i] == true)
+			{
+				v[i] = !v[i];
+				enabler(i, combs[i, 0], combs[i, 1], combs[i, 2]);
+				verts[i] = false;
+			}
+		
 		#endregion
 
 
