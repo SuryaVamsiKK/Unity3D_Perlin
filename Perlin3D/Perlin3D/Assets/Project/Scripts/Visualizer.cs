@@ -147,7 +147,7 @@ public class Visualizer : MonoBehaviour {
 				enabler(i, combs[i, 0], combs[i, 1], combs[i, 2]);
 				verts[i] = false;
 			}
-		
+		}
 		#endregion
 
 
