@@ -4,21 +4,6 @@ using UnityEngine;
 
 public class Visualizer : MonoBehaviour {
 
-	//                 v7_______e6_____________v6
-	//                  /|                    /|
-	//                 / |                   / |
-	//              e7/  |                e5/  |
-	//               /___|______e4_________/   |
-	//            v4|    |                 |v5 |e10
-	//              |    |                 |   |
-	//              |    |e11              |e9 |
-	//            e8|    |                 |   |
-	//              |    |_________________|___|
-	//              |   / v3      e2       |   /v2
-	//              |  /                   |  /
-	//              | /e3                  | /e1
-	//              |/_____________________|/
-	//              v0         e0          v1
 
 
 	public Color vertOffColor;
@@ -138,7 +123,6 @@ public class Visualizer : MonoBehaviour {
 		//enabler(6, 5, 6, 10);
 		//enabler(7, 6, 7, 11);
 		#region trial one
-
 		for (int i = 0; i < 8; i++)
 		{
 			if (verts[i] == true)
@@ -149,12 +133,26 @@ public class Visualizer : MonoBehaviour {
 			}
 		}
 		#endregion
-
-
 	}
 
 	void enabler(int vert, int e1, int e2, int e3)
 	{
+		//                 v7_______e6_____________v6
+		//                  /|                    /|
+		//                 / |                   / |
+		//              e7/  |                e5/  |
+		//               /___|______e4_________/   |
+		//            v4|    |                 |v5 |e10
+		//              |    |                 |   |
+		//              |    |e11              |e9 |
+		//            e8|    |                 |   |
+		//              |    |_________________|___|
+		//              |   / v3      e2       |   /v2
+		//              |  /                   |  /
+		//              | /e3                  | /e1
+		//              |/_____________________|/
+		//              v0         e0          v1
+
 		if (v[vert] == true)
 		{
 			e[e1] = !e[e1];
@@ -166,6 +164,135 @@ public class Visualizer : MonoBehaviour {
 			e[e1] = false;
 			e[e2] = false;
 			e[e3] = false;
+
+			if (vert == 0)
+			{
+				if (v[1] == true)
+				{
+					e[0] = true;
+				}
+				if (v[3] == true)
+				{
+					e[3] = true;
+				}
+				if (v[4] == true)
+				{
+					e[8] = true;
+				}
+			}
+
+			if (vert == 1)
+			{
+				if (v[0] == true)
+				{
+					e[0] = true;
+				}
+				if (v[2] == true)
+				{
+					e[1] = true;
+				}
+				if (v[5] == true)
+				{
+					e[9] = true;
+				}
+			}
+
+			if (vert == 2)
+			{
+				if (v[1] == true)
+				{
+					e[1] = true;
+				}
+				if (v[6] == true)
+				{
+					e[10] = true;
+				}
+				if (v[3] == true)
+				{
+					e[2] = true;
+				}
+			}
+
+			if (vert == 3)
+			{
+				if (v[0] == true)
+				{
+					e[3] = true;
+				}
+				if (v[2] == true)
+				{
+					e[2] = true;
+				}
+				if (v[7] == true)
+				{
+					e[11] = true;
+				}
+			}
+
+			if (vert == 4)
+			{
+				if (v[0] == true)
+				{
+					e[8] = true;
+				}
+				if (v[5] == true)
+				{
+					e[4] = true;
+				}
+				if (v[7] == true)
+				{
+					e[7] = true;
+				}
+			}
+
+			if (vert == 5)
+			{
+				if (v[1] == true)
+				{
+					e[9] = true;
+				}
+				if (v[6] == true)
+				{
+					e[5] = true;
+				}
+				if (v[4] == true)
+				{
+					e[4] = true;
+				}
+			}
+
+			if (vert == 6)
+			{
+				if (v[5] == true)
+				{
+					e[5] = true;
+				}
+				if (v[7] == true)
+				{
+					e[6] = true;
+				}
+				if (v[2] == true)
+				{
+					e[10] = true;
+				}
+			}
+
+			if (vert == 7)
+			{
+				if (v[4] == true)
+				{
+					e[7] = true;
+				}
+				if (v[3] == true)
+				{
+					e[11] = true;
+				}
+				if (v[6] == true)
+				{
+					e[6] = true;
+				}
+			}
+
 		}
 	}
 }
