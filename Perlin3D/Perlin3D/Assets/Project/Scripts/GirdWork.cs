@@ -2,29 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Visualizer : MonoBehaviour {
+public class GirdWork : MonoBehaviour {
 
-	bool[] e = new bool[12];
-	public Nodes[] v = new Nodes[8];
+	public int xSize, ySize, zSize;
+	[Header("")]
+	public float xOffset;
+	public float yOffset;
+	public float zOffset;
+	public uint tester = 2;
+	public Vertx[] v = new Vertx[8];
 
-	List<int> drawable = new List<int>();
-	public bool debugCube = false;
-	public bool debugMesh = false;
-	public bool edgeLog = false;
-	public bool test = true;
-
-	[HideInInspector]
-	public GameObject[] vertices;
-	[HideInInspector]
-	public List<GameObject[]> totalVerts;
-	[HideInInspector]
-	public GameObject[] edgeNodes;
-	[HideInInspector]
-	public List<GameObject[]> totalEdgs = new List<GameObject[]>();
-
-	int xs, ys, zs;
-
-	#region Permutations and Combinations
 	int[] edgeTable ={
 0x0  , 0x109, 0x203, 0x30a, 0x406, 0x50f, 0x605, 0x70c,
 0x80c, 0x905, 0xa0f, 0xb06, 0xc0a, 0xd03, 0xe09, 0xf00,
@@ -315,320 +302,225 @@ public class Visualizer : MonoBehaviour {
 {0, 9, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
 {0, 3, 8, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
 {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}};
-	#endregion
 
-	#region General Information
-	
-
-	//				All the neightbouring edges
-	//				v0  -----  e0		e3		e8
-	//				v1  -----  e0		e1		e9
-	//				v2  -----  e1		e10		e2
-	//				v3  -----  e2		e3		e11
-	//				v4  -----  e8		e7		e4
-	//				v5  -----  e4		e5		e9
-	//				v6  -----  e5		e6		e10
-	//				v7  -----  e6		e7		e11
-
-	//				All the neightbouring Verts
-	//				v0  -----  v1		v3		v4
-	//				v1  -----  v0		v2		v5
-	//				v2  -----  v1		v6		v3
-	//				v3  -----  v2		v0		v7
-	//				v4  -----  v0		v7		v5
-	//				v5  -----  v4		v6		v1
-	//				v6  -----  v5		v7		v2
-	//				v7  -----  v6		v4		v3
-	#endregion
-
-	#region Neighbour Tables
-
-	int[,] edgeNeighbours =
-		{ { 0, 3, 8},
-		  { 0, 1, 9},
-		  { 1, 10, 2},
-		  { 2, 3, 11},
-		  { 8, 7, 4},
-		  { 4, 5, 9},
-		  { 5, 6, 10},
-		  { 6, 7, 11},
-		};
-
-	int[,] vertNeighbours =
-		{ { 1, 3, 4},
-		  { 0, 2, 5},
-		  { 1, 6, 3},
-		  { 2, 0, 7},
-		  { 0, 7, 5},
-		  { 4, 6, 1},
-		  { 5, 7, 2},
-		  { 6, 4, 3},
-		};
-
-	#endregion
-
-	private void OnDrawGizmos()
+	void OnDrawGizmos()
 	{
-		if (this.transform.childCount >= 2)
-		{
-			#region Debugging
-
-			if (test == true)
-			{
-				vertsRest();
-				testing();
-
-				if (debugCube == true)
-				{
-					#region Edges
-					drawline(transform.GetChild(0).GetChild(0), transform.GetChild(0).GetChild(1));
-					drawline(transform.GetChild(0).GetChild(0), transform.GetChild(0).GetChild(4));
-					drawline(transform.GetChild(0).GetChild(0), transform.GetChild(0).GetChild(3));
-					drawline(transform.GetChild(0).GetChild(1), transform.GetChild(0).GetChild(2));
-					drawline(transform.GetChild(0).GetChild(1), transform.GetChild(0).GetChild(5));
-					drawline(transform.GetChild(0).GetChild(2), transform.GetChild(0).GetChild(6));
-					drawline(transform.GetChild(0).GetChild(2), transform.GetChild(0).GetChild(3));
-					drawline(transform.GetChild(0).GetChild(3), transform.GetChild(0).GetChild(7));
-					drawline(transform.GetChild(0).GetChild(4), transform.GetChild(0).GetChild(5));
-					drawline(transform.GetChild(0).GetChild(4), transform.GetChild(0).GetChild(7));
-					drawline(transform.GetChild(0).GetChild(6), transform.GetChild(0).GetChild(7));
-					drawline(transform.GetChild(0).GetChild(6), transform.GetChild(0).GetChild(5));
-					#endregion
-
-					for (int i = 0; i < edgeNodes.Length; i++)
-					{
-						if (e[i] == true)
-						{
-							Gizmos.color = this.gameObject.GetComponent<ColorCode>().edgeOnColor;
-						}
-						if (e[i] == false)
-						{
-							Gizmos.color = this.gameObject.GetComponent<ColorCode>().edgeOffColor;
-						}
-						Gizmos.DrawSphere(edgeNodes[i].transform.position, this.gameObject.GetComponent<ColorCode>().edgeSize);
-					}
-
-					for (int i = 0; i < vertices.Length; i++)
-					{
-						if (v[i].vert == true)
-						{
-							Gizmos.color = this.gameObject.GetComponent<ColorCode>().vertOnColor;
-						}
-						if (v[i].vert == false)
-						{
-							Gizmos.color = this.gameObject.GetComponent<ColorCode>().vertOffColor;
-						}
-
-						Gizmos.DrawSphere(vertices[i].transform.position, this.gameObject.GetComponent<ColorCode>().vertSize);
-					}
-				}
-
-				if (debugMesh == true)
-				{
-					Evaluation();
-				}
-			}
-
-			if (test == false)
-			{
-				xs = this.GetComponent<CubicGrid>().xSize;
-				ys = this.GetComponent<CubicGrid>().ySize;
-				zs = this.GetComponent<CubicGrid>().zSize;
-
-				//                 v7_______e6_____________v6
-				//                  /|                    /|
-				//                 / |                   / |
-				//              e7/  |                e5/  |
-				//               /___|______e4_________/   |
-				//            v4|    |                 |v5 |e10
-				//              |    |                 |   |
-				//              |    |e11              |e9 |
-				//            e8|    |                 |   |
-				//              |    |_________________|___|
-				//              |   / v3      e2       |   /v2
-				//              |  /                   |  /
-				//              | /e3                  | /e1
-				//              |/_____________________|/
-				//              v0         e0          v1
-
-				for (int x = 0; x < xs - 1; x++)
-				{
-					for (int y = 0; y < ys - 1; y++)
-					{
-						for (int z = 0; z < zs - 1; z++)
-						{
-							if (this.transform.GetComponent<CubicGrid>().grid[x, y, z] != null)
-							{
-								vertices[0] = this.transform.GetComponent<CubicGrid>().grid[x, y, z];
-								vertices[1] = this.transform.GetComponent<CubicGrid>().grid[x + 1, y, z];
-								vertices[2] = this.transform.GetComponent<CubicGrid>().grid[x + 1, y, z + 1];
-								vertices[3] = this.transform.GetComponent<CubicGrid>().grid[x, y, z + 1];
-								vertices[4] = this.transform.GetComponent<CubicGrid>().grid[x, y + 1, z];
-								vertices[5] = this.transform.GetComponent<CubicGrid>().grid[x + 1, y + 1, z];
-								vertices[6] = this.transform.GetComponent<CubicGrid>().grid[x + 1, y + 1, z + 1];
-								vertices[7] = this.transform.GetComponent<CubicGrid>().grid[x, y + 1, z + 1];
-
-
-								//vertsRest();
-								//for (int i = 0; i < vertices.Length; i++)
-								//{
-								//	vertices[i].transform.position += new Vector3(x, y, z);
-								//}
-								//for (int i = 0; i < edgeNodes.Length; i++)
-								//{
-								//	edgeNodes[i].transform.position += new Vector3(x, y, z);
-								//}
-								//totalVerts.Add(new GameObject[8] = vertices);
-								totalEdgs.Add(edgeNodes);
-							}
-						}
-					}
-				}
-
-				if (debugMesh == true)
-				{
-					Evaluation();
-				}
-			}
-
-			#endregion
-
-		}
+		calculate();
 	}
 
-	public void drawline(Transform p1, Transform p2)
+	void calculate()
+	{
+		Vertx[,,] verts = new Vertx[xSize, ySize, zSize];
+
+		//Vert and edge assignment 
+		for (int x = 0; x < xSize; x++)
+		{
+			for (int y = 0; y < ySize; y++)
+			{
+				for (int z = 0; z < zSize; z++)
+				{
+					verts[x, y, z] = new Vertx();
+					verts[x, y, z].pos = new Vector3(x*xOffset, y*yOffset, z*zOffset);
+					//if (x != xSize - 1)
+					//{
+					//	edges.Add(new Edgs(new Vector3(xOffset / 2, 0, 0) + new Vector3(x * xOffset, y * yOffset, z * zOffset), false));
+					//}
+					//if (y != ySize - 1)
+					//{
+					//	edges.Add(new Edgs(new Vector3(0, yOffset / 2, 0) + new Vector3(x * xOffset, y * yOffset, z * zOffset), false));
+					//}
+					//if (z != zSize - 1)
+					//{
+					//	edges.Add(new Edgs(new Vector3(0, 0, zOffset / 2) + new Vector3(x * xOffset, y * yOffset, z * zOffset), false));
+					//}Gizmos.color = this.GetComponent<ColorCode>().vertOffColor;
+				}
+			}
+		}
+
+		for (int x = 0; x < xSize; x++)
+		{
+			for (int y = 0; y < ySize; y++)
+			{
+				for (int z = 0; z < zSize; z++)
+				{
+					Gizmos.DrawSphere(verts[x, y, z].pos, GetComponent<ColorCode>().vertSize);
+					if (x != xSize - 1)
+					{
+						drawline(verts[x, y, z].pos, verts[x + 1, y, z].pos);
+					}
+					if (y != ySize - 1)
+					{
+						drawline(verts[x, y, z].pos, verts[x, y + 1, z].pos);
+					}
+					if (z != zSize - 1)
+					{
+						drawline(verts[x, y, z].pos, verts[x, y, z + 1].pos);
+					}
+				}
+			}
+		}
+
+		verts[2, 2, 2].button = true;
+		verts[2, 1, 0].button = true;
+		verts[2, 1, 1].button = true;
+
+		//Grid Draw
+		for (int x = 0; x < xSize - 1; x++)
+		{
+			for (int y = 0; y < ySize - 1; y++)
+			{
+				for (int z = 0; z < zSize - 1; z++)
+				{
+					v[0] = verts[x, y, z];
+					v[1] = verts[x + 1, y, z];
+					v[2] = verts[x + 1, y, z + 1];
+					v[3] = verts[x, y, z + 1];
+					v[4] = verts[x, y + 1, z];
+					v[5] = verts[x + 1, y + 1, z];
+					v[6] = verts[x + 1, y + 1, z + 1];
+					v[7] = verts[x, y + 1, z + 1];
+					Evaluate(v);
+				}
+			}
+		}
+
+		#region test
+
+		//if (debugCube == true)
+		//{
+		//	#region Edges
+		//	//drawline(transform.GetChild(0).GetChild(0), transform.GetChild(0).GetChild(1));
+		//	//drawline(transform.GetChild(0).GetChild(0), transform.GetChild(0).GetChild(4));
+		//	//drawline(transform.GetChild(0).GetChild(0), transform.GetChild(0).GetChild(3));
+		//	//drawline(transform.GetChild(0).GetChild(1), transform.GetChild(0).GetChild(2));
+		//	//drawline(transform.GetChild(0).GetChild(1), transform.GetChild(0).GetChild(5));
+		//	//drawline(transform.GetChild(0).GetChild(2), transform.GetChild(0).GetChild(6));
+		//	//drawline(transform.GetChild(0).GetChild(2), transform.GetChild(0).GetChild(3));
+		//	//drawline(transform.GetChild(0).GetChild(3), transform.GetChild(0).GetChild(7));
+		//	//drawline(transform.GetChild(0).GetChild(4), transform.GetChild(0).GetChild(5));
+		//	//drawline(transform.GetChild(0).GetChild(4), transform.GetChild(0).GetChild(7));
+		//	//drawline(transform.GetChild(0).GetChild(6), transform.GetChild(0).GetChild(7));
+		//	//drawline(transform.GetChild(0).GetChild(6), transform.GetChild(0).GetChild(5));
+		//	for (int i = 0; i < cubicX * cubicY * cubicZ; i++)
+		//	{
+		//		drawline(transform.GetChild(0).GetChild(0), transform.GetChild(0).GetChild(1));
+		//		drawline(transform.GetChild(0).GetChild(0), transform.GetChild(0).GetChild(4));
+		//		drawline(transform.GetChild(0).GetChild(0), transform.GetChild(0).GetChild(3));
+		//		drawline(transform.GetChild(0).GetChild(1), transform.GetChild(0).GetChild(2));
+		//		drawline(transform.GetChild(0).GetChild(1), transform.GetChild(0).GetChild(5));
+		//		drawline(transform.GetChild(0).GetChild(2), transform.GetChild(0).GetChild(6));
+		//		drawline(transform.GetChild(0).GetChild(2), transform.GetChild(0).GetChild(3));
+		//		drawline(transform.GetChild(0).GetChild(3), transform.GetChild(0).GetChild(7));
+		//		drawline(transform.GetChild(0).GetChild(4), transform.GetChild(0).GetChild(5));
+		//		drawline(transform.GetChild(0).GetChild(4), transform.GetChild(0).GetChild(7));
+		//		drawline(transform.GetChild(0).GetChild(6), transform.GetChild(0).GetChild(7));
+		//		drawline(transform.GetChild(0).GetChild(6), transform.GetChild(0).GetChild(5));
+		//	}
+		//	#endregion
+
+		//	for (int i = 0; i < edgeNodes.Length; i++)
+		//	{
+		//		if (e[i] == true)
+		//		{
+		//			Gizmos.color = this.gameObject.GetComponent<ColorCode>().edgeOnColor;
+		//		}
+		//		if (e[i] == false)
+		//		{
+		//			Gizmos.color = this.gameObject.GetComponent<ColorCode>().edgeOffColor;
+		//		}
+		//		Gizmos.DrawSphere(edgeNodes[i].transform.position, this.gameObject.GetComponent<ColorCode>().edgeSize);
+		//	}
+
+		//	for (int i = 0; i < vertices.Length; i++)
+		//	{
+		//		if (v[i].vert == true)
+		//		{
+		//			Gizmos.color = this.gameObject.GetComponent<ColorCode>().vertOnColor;
+		//		}
+		//		if (v[i].vert == false)
+		//		{
+		//			Gizmos.color = this.gameObject.GetComponent<ColorCode>().vertOffColor;
+		//		}
+
+		//		Gizmos.DrawSphere(vertices[i].transform.position, this.gameObject.GetComponent<ColorCode>().vertSize);
+		//	}
+		//}
+
+		//if (debugMesh == true)
+		//{
+		//	Evaluation();
+		//}
+
+		#endregion
+	}
+
+	public void drawline(Vector3 p1, Vector3 p2)
 	{
 		Gizmos.color = this.gameObject.GetComponent<ColorCode>().linecolor;
-		Gizmos.DrawLine(p1.transform.position, p2.transform.position);
+		Gizmos.DrawLine(p1, p2);
 	}
-
-	public void Evaluation()
+	public void drawedge(Vector3 p1, float p2, bool check)
 	{
-		//Debugging the enabled Vertices from the choosne edges.
-		for (int i = 0; i < 8; i++)
+		if (check == false)
 		{
-			Evaluate_Boolean(i, edgeNeighbours[i, 0], edgeNeighbours[i, 1], edgeNeighbours[i, 2]);
+			Gizmos.color = this.gameObject.GetComponent<ColorCode>().edgeOffColor;
 		}
 
+		if (check == true)
+		{
+			Gizmos.color = this.gameObject.GetComponent<ColorCode>().edgeOnColor;
+		}
+		Gizmos.DrawSphere(p1, p2);
+	}
+
+	void Evaluate(Vertx[] ver)
+	{
 		#region permutational Calculations.
 
 		int cubeindex = 0;
 		float isoLevel = 1f;
 
-		if ((v[0].vert ? 1 : 0) < isoLevel) cubeindex |= 1;
-		if ((v[1].vert ? 1 : 0) < isoLevel) cubeindex |= 2;
-		if ((v[2].vert ? 1 : 0) < isoLevel) cubeindex |= 4;
-		if ((v[3].vert ? 1 : 0) < isoLevel) cubeindex |= 8;
-		if ((v[4].vert ? 1 : 0) < isoLevel) cubeindex |= 16;
-		if ((v[5].vert ? 1 : 0) < isoLevel) cubeindex |= 32;
-		if ((v[6].vert ? 1 : 0) < isoLevel) cubeindex |= 64;
-		if ((v[7].vert ? 1 : 0) < isoLevel) cubeindex |= 128;
+		if ((ver[0].button ? 1 : 0) < isoLevel) cubeindex |= 1;
+		if ((ver[1].button ? 1 : 0) < isoLevel) cubeindex |= 2;
+		if ((ver[2].button ? 1 : 0) < isoLevel) cubeindex |= 4;
+		if ((ver[3].button ? 1 : 0) < isoLevel) cubeindex |= 8;
+		if ((ver[4].button ? 1 : 0) < isoLevel) cubeindex |= 16;
+		if ((ver[5].button ? 1 : 0) < isoLevel) cubeindex |= 32;
+		if ((ver[6].button ? 1 : 0) < isoLevel) cubeindex |= 64;
+		if ((ver[7].button ? 1 : 0) < isoLevel) cubeindex |= 128;
 
-		int[] vertlist = new int[12];
+		Vector3[] vertlist = new Vector3[12];
+
 		if (isVertEnabled(edgeTable[cubeindex], 1))
-			vertlist[0] = 0;
+			vertlist[0] = VertexInterpolate(ver[0].pos, ver[1].pos);
 		if (isVertEnabled(edgeTable[cubeindex], 2))
-			vertlist[1] = 1;
+			vertlist[1] = VertexInterpolate(ver[1].pos, ver[2].pos);
 		if (isVertEnabled(edgeTable[cubeindex], 4))
-			vertlist[2] = 2;
+			vertlist[2] = VertexInterpolate(ver[2].pos, ver[3].pos);
 		if (isVertEnabled(edgeTable[cubeindex], 8))
-			vertlist[3] = 3;
+			vertlist[3] = VertexInterpolate(ver[3].pos, ver[0].pos);
 		if (isVertEnabled(edgeTable[cubeindex], 16))
-			vertlist[4] = 4;
+			vertlist[4] = VertexInterpolate(ver[4].pos, ver[5].pos);
 		if (isVertEnabled(edgeTable[cubeindex], 32))
-			vertlist[5] = 5;
+			vertlist[5] = VertexInterpolate(ver[5].pos, ver[6].pos);
 		if (isVertEnabled(edgeTable[cubeindex], 64))
-			vertlist[6] = 6;
+			vertlist[6] = VertexInterpolate(ver[6].pos, ver[7].pos);
 		if (isVertEnabled(edgeTable[cubeindex], 128))
-			vertlist[7] = 7;
+			vertlist[7] = VertexInterpolate(ver[7].pos, ver[4].pos);
 		if (isVertEnabled(edgeTable[cubeindex], 256))
-			vertlist[8] = 8;
+			vertlist[8] = VertexInterpolate(ver[0].pos, ver[4].pos);
 		if (isVertEnabled(edgeTable[cubeindex], 512))
-			vertlist[9] = 9;
+			vertlist[9] = VertexInterpolate(ver[1].pos, ver[5].pos);
 		if (isVertEnabled(edgeTable[cubeindex], 1024))
-			vertlist[10] = 10;
+			vertlist[10] = VertexInterpolate(ver[2].pos, ver[6].pos);
 		if (isVertEnabled(edgeTable[cubeindex], 2048))
-			vertlist[11] = 11;
-		#endregion
+			vertlist[11] = VertexInterpolate(ver[3].pos, ver[7].pos);
 
-		//Drawing the triangles based on the choosne vertices and Debugging the vertice names.
 		for (int i = 0; triTable[cubeindex, i] != -1; i += 3)
 		{
-			if (edgeLog == true)
-			{
-				Debug.Log(vertlist[triTable[cubeindex, i]] + " : " + vertlist[triTable[cubeindex, i + 1]] + " : " + vertlist[triTable[cubeindex, i + 2]]);
-			}
 			triDraw(vertlist[triTable[cubeindex, i]], vertlist[triTable[cubeindex, i + 1]], vertlist[triTable[cubeindex, i + 2]]);
 		}
-	}
-
-	void Evaluate_Boolean(int vert, int e1, int e2, int e3)
-	{
-		if (v[vert].vert == true)
-		{
-			// Firstly making all the linked edges true.
-			e[e1] = true;
-			e[e2] = true;
-			e[e3] = true;
-
-			//Checking what neighbours are ON and disabling the edges based on the Neighbours that are ON.
-			for (int i = 0; i < 8; i++)
-			{
-				if (vert == i)
-				{
-					if (v[vertNeighbours[i, 0]].vert == true)               // if the neighbour is true then siwtch the link betwwen them off
-					{
-						e[edgeNeighbours[i, 0]] = false;
-					}
-					if (v[vertNeighbours[i, 1]].vert == true)
-					{
-						e[edgeNeighbours[i, 1]] = false;
-					}
-					if (v[vertNeighbours[i, 2]].vert == true)
-					{
-						e[edgeNeighbours[i, 2]] = false;
-					}
-				}
-			}
-			//checking the neighbours based on the integer table above just to reduce the some many if statments.
-		}
-
-		if (v[vert].vert == false)
-		{
-			// Firstly making all the linked edges false.
-			e[e1] = false;
-			e[e2] = false;
-			e[e3] = false;
-
-			//Checking what neighbours are ON and leaving the linked edges that connect to the neighbours ON.
-			for (int i = 0; i < 8; i++)
-			{
-				if (vert == i)
-				{
-					if (v[vertNeighbours[i, 0]].vert == true)        // if the neighbour is true then siwtch the link betwwen them back on
-					{
-						e[edgeNeighbours[i, 0]] = true;
-					}
-					if (v[vertNeighbours[i, 1]].vert == true)
-					{
-						e[edgeNeighbours[i, 1]] = true;
-					}
-					if (v[vertNeighbours[i, 2]].vert == true)
-					{
-						e[edgeNeighbours[i, 2]] = true;
-					}
-				}
-			}
-			//again checking the neighbours based on the integer table above just to reduce the some many if statments.
-		}
-	}
-
-	void triDraw(int p1, int p2, int p3)
-	{
-		Gizmos.color = this.gameObject.GetComponent<ColorCode>().MeshColor;
-		Gizmos.DrawLine(edgeNodes[p1].transform.position, edgeNodes[p2].transform.position);
-		Gizmos.DrawLine(edgeNodes[p2].transform.position, edgeNodes[p3].transform.position);
-		Gizmos.DrawLine(edgeNodes[p3].transform.position, edgeNodes[p1].transform.position);
+		#endregion
 	}
 
 	bool isVertEnabled(int edgetableindex, int key)
@@ -636,57 +528,36 @@ public class Visualizer : MonoBehaviour {
 		return ((edgetableindex & key) == key);
 	}
 
-	void testing()
+	void triDraw(Vector3 p1, Vector3 p2, Vector3 p3)
 	{
-		edgeNodes = new GameObject[transform.GetChild(1).childCount];
-		vertices = new GameObject[transform.GetChild(0).childCount];
-		for (int i = 0; i < transform.GetChild(1).childCount; i++)
-		{
-			edgeNodes[i] = transform.GetChild(1).GetChild(i).gameObject;
-		}
-
-		for (int i = 0; i < transform.GetChild(0).childCount; i++)
-		{
-			vertices[i] = transform.GetChild(0).GetChild(i).gameObject;
-		}
+		Gizmos.color = this.gameObject.GetComponent<ColorCode>().MeshColor;
+		Gizmos.DrawLine(p1, p2);
+		Gizmos.DrawLine(p2, p3);
+		Gizmos.DrawLine(p3, p1);
 	}
 
-	void vertsRest()
+	Vector3 VertexInterpolate(Vector3 p1, Vector3 p2)
 	{
-		vertices[0].transform.position = new Vector3(0, 0, 0);
-		vertices[1].transform.position = new Vector3(1, 0, 0);
-		vertices[2].transform.position = new Vector3(1, 0, 1);
-		vertices[3].transform.position = new Vector3(0, 0, 1);
-		vertices[4].transform.position = new Vector3(0, 1, 0);
-		vertices[5].transform.position = new Vector3(1, 1, 0);
-		vertices[6].transform.position = new Vector3(1, 1, 1);
-		vertices[7].transform.position = new Vector3(0, 1, 1);
+		Vector3 p = new Vector3();
 
-		edgeNodes[0].transform.position = new Vector3(0.5f, 0, 0);
-		edgeNodes[1].transform.position = new Vector3(1, 0, 0.5f);
-		edgeNodes[2].transform.position = new Vector3(0.5f, 0, 1);
-		edgeNodes[3].transform.position = new Vector3(0, 0, 0.5f);
-		edgeNodes[4].transform.position = new Vector3(0.5f, 1, 0);
-		edgeNodes[5].transform.position = new Vector3(1, 1, 0.5f);
-		edgeNodes[6].transform.position = new Vector3(0.5f, 1, 1);
-		edgeNodes[7].transform.position = new Vector3(0, 1, 0.5f);
-		edgeNodes[8].transform.position = new Vector3(0, 0.5f, 0);
-		edgeNodes[9].transform.position = new Vector3(1, 0.5f, 0);
-		edgeNodes[10].transform.position = new Vector3(1, 0.5f, 1);
-		edgeNodes[11].transform.position = new Vector3(0, 0.5f, 1);
+		p.x = (float)(p1.x + (xOffset / 2) * (p2.x - p1.x));
+		p.y = (float)(p1.y + (yOffset / 2) * (p2.y - p1.y));
+		p.z = (float)(p1.z + (zOffset / 2) * (p2.z - p1.z));
+
+		drawedge(p, GetComponent<ColorCode>().edgeSize,true);
+
+		return p;
 	}
-
 }
 
-[System.Serializable]
-public class Nodes
+public class Vertx
 {
-	public int ID;
-	public bool vert;
+	public Vector3 pos;
+	public bool button;
+}
 
-	public Nodes(bool verts, int id)
-	{
-		ID = id;
-		vert = verts;
-	}
+public class Edgs
+{
+	public Vector3 pos;
+	public bool button;
 }

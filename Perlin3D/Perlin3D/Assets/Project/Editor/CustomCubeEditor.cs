@@ -7,7 +7,7 @@ using UnityEditor;
 public class CustomCubeEditor : Editor {
 
 	Visualizer db;
-	bool custom = false;
+	bool custom = true;
 
 	void OnEnable()
 	{
@@ -42,6 +42,7 @@ public class CustomCubeEditor : Editor {
 			GUILayout.BeginHorizontal();
 			db.debugCube = GUILayout.Toggle(db.debugCube, "Debug Cube");
 			db.debugMesh = GUILayout.Toggle(db.debugMesh, "Debug Mesh");
+			db.test = GUILayout.Toggle(db.test, "Testing Type");
 			db.edgeLog = GUILayout.Toggle(db.edgeLog, "Log Edges");
 			GUILayout.EndHorizontal();
 		}
