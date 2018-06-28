@@ -32,8 +32,7 @@ public class CustomCubeEditor : Editor {
 			for (int i = 0; i < db.v.Length; i++)
 			{
 				GUILayout.BeginHorizontal();
-				db.v[i].vert = GUILayout.Toggle(db.v[i].vert, " : V " + i);
-				GUILayout.Label("ID : " + db.v[i].ID);
+				db.v[i] = GUILayout.Toggle(db.v[i], " : V " + i);
 				GUILayout.EndHorizontal();
 			}
 
@@ -42,7 +41,6 @@ public class CustomCubeEditor : Editor {
 			GUILayout.BeginHorizontal();
 			db.debugCube = GUILayout.Toggle(db.debugCube, "Debug Cube");
 			db.debugMesh = GUILayout.Toggle(db.debugMesh, "Debug Mesh");
-			db.test = GUILayout.Toggle(db.test, "Testing Type");
 			db.edgeLog = GUILayout.Toggle(db.edgeLog, "Log Edges");
 			GUILayout.EndHorizontal();
 		}
@@ -56,7 +54,7 @@ public class CustomCubeEditor : Editor {
 	{
 		for (int i = 0; i < db.v.Length; i++)
 		{
-			db.v[i].vert = false;
+			db.v[i] = false;
 		}
 	}
 

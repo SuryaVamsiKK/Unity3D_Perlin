@@ -15279,7 +15279,6 @@ GameObject:
   - component: {fileID: 1754885981}
   - component: {fileID: 1754885980}
   - component: {fileID: 1754885982}
-  - component: {fileID: 1754885983}
   m_Layer: 0
   m_Name: MarchingCube
   m_TagString: Untagged
@@ -15318,7 +15317,9 @@ MonoBehaviour:
   debugCube: 1
   debugMesh: 1
   edgeLog: 0
-  test: 1
+  xOffset: 1
+  yOffset: 1
+  zOffset: 1
   vertices:
   - {fileID: 1417025150}
   - {fileID: 1536172989}
@@ -15373,25 +15374,9 @@ MonoBehaviour:
   vertOnColor: {r: 1, g: 0, b: 0, a: 1}
   edgeOffColor: {r: 0.14150941, g: 0.14150941, b: 0.14150941, a: 1}
   edgeOnColor: {r: 0.2565924, g: 1, b: 0, a: 1}
-  linecolor: {r: 0, g: 0, b: 0, a: 1}
+  linecolor: {r: 0, g: 0, b: 0, a: 0.8235294}
   vertSize: 0.03
   edgeSize: 0.02
---- !u!114 &1754885983
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1754885979}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1bbba9e738d514643b83742d36a04b2e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  xSize: 3
-  ySize: 3
-  zSize: 3
-  emt: {fileID: 1864451639}
-  emt1: {fileID: 1715206112}
 --- !u!1 &1758480408
 GameObject:
   m_ObjectHideFlags: 0
