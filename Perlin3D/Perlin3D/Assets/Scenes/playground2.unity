@@ -90,7 +90,7 @@ LightmapSettings:
     m_PVRFilteringAtrousPositionSigmaAO: 1
     m_ShowResolutionOverlay: 1
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 0
+  m_UseShadowmask: 1
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -222,7 +222,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3df6e4214fc5984eb6aa1534adf73b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MeshColor: {r: 0, g: 1, b: 0.6835396, a: 1}
+  MeshColor: {r: 0, g: 0, b: 0, a: 1}
   vertOffColor: {r: 0, g: 0, b: 0, a: 1}
   vertOnColor: {r: 1, g: 0, b: 0, a: 1}
   edgeOffColor: {r: 0, g: 0.33165145, b: 1, a: 1}
@@ -242,17 +242,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GridDebug: 0
-  sphere: 0
+  MeshDebug: 1
+  RenderMesh: 1
+  sphere: 1
+  flipNormals: 0
+  radius: 14
+  mat: {fileID: 2100000, guid: 68a56822aaf85d145af091a08dcf00f9, type: 2}
   noisePosition: {x: 0, y: 0, z: 0}
-  noiseScale: 0.15
+  noiseScale: 0.08
   readableValue: 0.53
-  xSize: 10
-  ySize: 10
-  zSize: 10
-  xOffset: 1
-  yOffset: 1
-  zOffset: 1
-  tester: 8
+  xSize: 30
+  ySize: 30
+  zSize: 30
+  xOffset: 0.5
+  yOffset: 0.5
+  zOffset: 0.5
+  FullVertList: []
 --- !u!4 &328880629
 Transform:
   m_ObjectHideFlags: 0
@@ -282,7 +287,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &865817992
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -314,7 +319,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GridDebug: 0
+  MeshDebug: 1
+  RenderMesh: 1
   sphere: 0
+  flipNormals: 1
+  radius: 20
+  mat: {fileID: 0}
   noisePosition: {x: 0, y: 1.4, z: 0}
   noiseScale: 0.3
   readableValue: 0.53
@@ -324,7 +334,220 @@ MonoBehaviour:
   xOffset: 2
   yOffset: 2
   zOffset: 2
-  tester: 8
+  FullVertList:
+  - {x: -3, y: 5, z: -1}
+  - {x: -4, y: 6, z: -1}
+  - {x: -3, y: 6, z: -2}
+  - {x: -3, y: 5, z: 1}
+  - {x: -4, y: 6, z: -1}
+  - {x: -3, y: 5, z: -1}
+  - {x: -4, y: 6, z: 1}
+  - {x: -4, y: 6, z: -1}
+  - {x: -3, y: 5, z: 1}
+  - {x: -3, y: 5, z: 1}
+  - {x: -3, y: 6, z: 2}
+  - {x: -4, y: 6, z: 1}
+  - {x: -3, y: 7, z: -5}
+  - {x: -3, y: 7, z: -3}
+  - {x: -5, y: 7, z: -5}
+  - {x: -3, y: 7, z: -3}
+  - {x: -5, y: 7, z: -3}
+  - {x: -5, y: 7, z: -5}
+  - {x: -3, y: 6, z: -2}
+  - {x: -4, y: 6, z: -1}
+  - {x: -5, y: 7, z: -1}
+  - {x: -3, y: 6, z: -2}
+  - {x: -5, y: 7, z: -1}
+  - {x: -3, y: 7, z: -3}
+  - {x: -3, y: 7, z: -3}
+  - {x: -5, y: 7, z: -1}
+  - {x: -5, y: 7, z: -3}
+  - {x: -4, y: 6, z: -1}
+  - {x: -4, y: 6, z: 1}
+  - {x: -5, y: 7, z: 1}
+  - {x: -5, y: 7, z: -1}
+  - {x: -4, y: 6, z: -1}
+  - {x: -5, y: 7, z: 1}
+  - {x: -4, y: 6, z: 1}
+  - {x: -3, y: 6, z: 2}
+  - {x: -3, y: 7, z: 3}
+  - {x: -4, y: 6, z: 1}
+  - {x: -3, y: 7, z: 3}
+  - {x: -5, y: 7, z: 1}
+  - {x: -5, y: 7, z: 1}
+  - {x: -3, y: 7, z: 3}
+  - {x: -5, y: 7, z: 3}
+  - {x: -5, y: 12, z: 2}
+  - {x: -5, y: 11, z: 3}
+  - {x: -4, y: 12, z: 3}
+  - {x: -1, y: 5, z: -3}
+  - {x: -2, y: 6, z: -5}
+  - {x: -1, y: 5, z: -5}
+  - {x: -2, y: 6, z: -3}
+  - {x: -2, y: 6, z: -5}
+  - {x: -1, y: 5, z: -3}
+  - {x: -2, y: 6, z: -3}
+  - {x: -3, y: 5, z: -1}
+  - {x: -3, y: 6, z: -2}
+  - {x: -1, y: 5, z: -3}
+  - {x: -3, y: 5, z: -1}
+  - {x: -2, y: 6, z: -3}
+  - {x: -1, y: 5, z: -3}
+  - {x: -2, y: 4, z: -1}
+  - {x: -3, y: 5, z: -1}
+  - {x: -1, y: 5, z: -3}
+  - {x: -1, y: 4, z: -2}
+  - {x: -2, y: 4, z: -1}
+  - {x: -2, y: 4, z: -1}
+  - {x: -2, y: 4, z: 1}
+  - {x: -3, y: 5, z: 1}
+  - {x: -3, y: 5, z: -1}
+  - {x: -2, y: 4, z: -1}
+  - {x: -3, y: 5, z: 1}
+  - {x: -1, y: 5, z: 3}
+  - {x: -2, y: 6, z: 3}
+  - {x: -3, y: 6, z: 2}
+  - {x: -1, y: 4, z: 2}
+  - {x: -1, y: 5, z: 3}
+  - {x: -3, y: 6, z: 2}
+  - {x: -1, y: 4, z: 2}
+  - {x: -3, y: 6, z: 2}
+  - {x: -3, y: 5, z: 1}
+  - {x: -1, y: 4, z: 2}
+  - {x: -3, y: 5, z: 1}
+  - {x: -2, y: 4, z: 1}
+  - {x: -2, y: 6, z: -5}
+  - {x: -2, y: 6, z: -3}
+  - {x: -3, y: 7, z: -3}
+  - {x: -3, y: 7, z: -5}
+  - {x: -2, y: 6, z: -5}
+  - {x: -3, y: 7, z: -3}
+  - {x: -2, y: 6, z: -3}
+  - {x: -3, y: 6, z: -2}
+  - {x: -3, y: 7, z: -3}
+  - {x: -3, y: 6, z: 2}
+  - {x: -2, y: 6, z: 3}
+  - {x: -3, y: 7, z: 3}
+  - {x: 0, y: 6, z: -3}
+  - {x: -1, y: 5, z: -5}
+  - {x: 0, y: 6, z: -5}
+  - {x: -1, y: 5, z: -3}
+  - {x: -1, y: 5, z: -5}
+  - {x: 0, y: 6, z: -3}
+  - {x: -1, y: 5, z: -3}
+  - {x: 0, y: 6, z: -3}
+  - {x: 1, y: 6, z: -2}
+  - {x: -1, y: 5, z: -3}
+  - {x: 1, y: 6, z: -2}
+  - {x: -1, y: 4, z: -2}
+  - {x: -1, y: 4, z: -2}
+  - {x: 1, y: 6, z: -2}
+  - {x: 1, y: 4, z: -2}
+  - {x: 0, y: 6, z: 3}
+  - {x: -1, y: 5, z: 3}
+  - {x: -1, y: 4, z: 2}
+  - {x: 0, y: 6, z: 3}
+  - {x: -1, y: 4, z: 2}
+  - {x: 1, y: 6, z: 2}
+  - {x: 1, y: 6, z: 2}
+  - {x: -1, y: 4, z: 2}
+  - {x: 1, y: 4, z: 2}
+  - {x: 1, y: 7, z: -5}
+  - {x: 1, y: 7, z: -3}
+  - {x: 0, y: 6, z: -3}
+  - {x: 0, y: 6, z: -5}
+  - {x: 1, y: 7, z: -5}
+  - {x: 0, y: 6, z: -3}
+  - {x: 0, y: 6, z: -3}
+  - {x: 1, y: 7, z: -3}
+  - {x: 1, y: 6, z: -2}
+  - {x: 1, y: 6, z: 2}
+  - {x: 1, y: 7, z: 3}
+  - {x: 0, y: 6, z: 3}
+  - {x: 1, y: 11, z: 3}
+  - {x: 1, y: 12, z: 2}
+  - {x: 0, y: 12, z: 3}
+  - {x: 1, y: 6, z: -2}
+  - {x: 2, y: 4, z: -1}
+  - {x: 1, y: 4, z: -2}
+  - {x: 2, y: 6, z: -1}
+  - {x: 2, y: 4, z: -1}
+  - {x: 1, y: 6, z: -2}
+  - {x: 2, y: 4, z: -1}
+  - {x: 2, y: 6, z: -1}
+  - {x: 2, y: 4, z: 1}
+  - {x: 2, y: 6, z: -1}
+  - {x: 2, y: 6, z: 1}
+  - {x: 2, y: 4, z: 1}
+  - {x: 2, y: 6, z: 1}
+  - {x: 1, y: 4, z: 2}
+  - {x: 2, y: 4, z: 1}
+  - {x: 1, y: 6, z: 2}
+  - {x: 1, y: 4, z: 2}
+  - {x: 2, y: 6, z: 1}
+  - {x: 3, y: 7, z: -5}
+  - {x: 3, y: 7, z: -3}
+  - {x: 1, y: 7, z: -5}
+  - {x: 3, y: 7, z: -3}
+  - {x: 1, y: 7, z: -3}
+  - {x: 1, y: 7, z: -5}
+  - {x: 2, y: 6, z: -1}
+  - {x: 1, y: 6, z: -2}
+  - {x: 1, y: 7, z: -3}
+  - {x: 2, y: 6, z: -1}
+  - {x: 1, y: 7, z: -3}
+  - {x: 3, y: 7, z: -1}
+  - {x: 3, y: 7, z: -1}
+  - {x: 1, y: 7, z: -3}
+  - {x: 3, y: 7, z: -3}
+  - {x: 3, y: 7, z: -1}
+  - {x: 3, y: 7, z: 1}
+  - {x: 2, y: 6, z: 1}
+  - {x: 2, y: 6, z: -1}
+  - {x: 3, y: 7, z: -1}
+  - {x: 2, y: 6, z: 1}
+  - {x: 1, y: 6, z: 2}
+  - {x: 2, y: 8, z: 3}
+  - {x: 1, y: 7, z: 3}
+  - {x: 2, y: 6, z: 1}
+  - {x: 2, y: 8, z: 3}
+  - {x: 1, y: 6, z: 2}
+  - {x: 2, y: 6, z: 1}
+  - {x: 3, y: 8, z: 2}
+  - {x: 2, y: 8, z: 3}
+  - {x: 2, y: 6, z: 1}
+  - {x: 3, y: 7, z: 1}
+  - {x: 3, y: 8, z: 2}
+  - {x: 3, y: 8, z: 2}
+  - {x: 3, y: 10, z: 2}
+  - {x: 2, y: 10, z: 3}
+  - {x: 2, y: 8, z: 3}
+  - {x: 3, y: 8, z: 2}
+  - {x: 2, y: 10, z: 3}
+  - {x: 3, y: 11, z: -3}
+  - {x: 3, y: 11, z: -5}
+  - {x: 2, y: 12, z: -5}
+  - {x: 2, y: 12, z: -3}
+  - {x: 3, y: 11, z: -3}
+  - {x: 2, y: 12, z: -5}
+  - {x: 3, y: 11, z: -3}
+  - {x: 2, y: 12, z: -3}
+  - {x: 3, y: 12, z: -2}
+  - {x: 3, y: 11, z: 1}
+  - {x: 3, y: 12, z: 0}
+  - {x: 2, y: 12, z: 1}
+  - {x: 2, y: 12, z: 1}
+  - {x: 1, y: 12, z: 2}
+  - {x: 1, y: 11, z: 3}
+  - {x: 3, y: 11, z: 1}
+  - {x: 2, y: 12, z: 1}
+  - {x: 1, y: 11, z: 3}
+  - {x: 3, y: 11, z: 1}
+  - {x: 1, y: 11, z: 3}
+  - {x: 2, y: 10, z: 3}
+  - {x: 3, y: 11, z: 1}
+  - {x: 2, y: 10, z: 3}
+  - {x: 3, y: 10, z: 2}
 --- !u!4 &865817994
 Transform:
   m_ObjectHideFlags: 0
